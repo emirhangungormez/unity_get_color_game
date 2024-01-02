@@ -22,7 +22,7 @@ public class LevelCreatorScript : MonoBehaviour
     // Seviye renk sayısı ve şişe sayısını tutan private tam sayı değişkenleri.
     public static int levelColorCount;
     public static int levelBottleCount;
-    public static int CurGameLevel;
+    public static int CurGameLevel = 1;
 
     [SerializeField] private Color[] liquidColors; // Renk dizisi, Unity editöründe görüntülenebilir.
     [SerializeField] public GameObject[] sheepPrefabs; // Renklerle eşleşen koyun prefabları
@@ -45,23 +45,42 @@ public class LevelCreatorScript : MonoBehaviour
         instance = this;
         // liquidColors dizisi, ColorsList dizisine atanır.
         ColorsList = liquidColors;
-        
     }
 
 
-    public void CreateTutorialLevel()
+    public void CreateNewLevel()
     {
-        CurGameLevel = 1;
-        menuCanvas.gameObject.SetActive(false);
+        RemoveOldLevel();
 
-        // Önceki seviyenin elemanları temizlenir.
+        levelCanvas.gameObject.SetActive(false);
+
+        CurGameLevel++;
+
+        // Level Kontrolleri
+        if (CurGameLevel == 5)
+        {
+            levelBottleCount = 5;
+        }
+        else if (CurGameLevel == 10)
+        {
+            levelBottleCount = 7;
+        }
+        else if (CurGameLevel == 15)
+        {
+            levelBottleCount = 9;
+        }
+        else if (CurGameLevel == 20)
+        {
+            CreateTutorialLevel();
+        }
+
+        // Seviye numarası ekranda gösterilir.
         levelText.text = "Level " + CurGameLevel;
-        levelBottleCount = 3;
-       //  levelColorCount = 2;
 
-        // Sıvılar, şişeler ve koyunlar üretilir.
+        // Coroutine kullanarak yeni objeleri oluşturma işlemlerini sırayla gerçekleştirme
         StartCoroutine(GenerateObjectsAfterRemoval());
     }
+
 
     public void CheckLevel()
     {
@@ -75,36 +94,19 @@ public class LevelCreatorScript : MonoBehaviour
     }
 
     // Yeni bir seviye oluşturmak için kullanılan metot.
-    public void CreateNewLevel()
+    
+
+    public void CreateTutorialLevel()
     {
-        RemoveOldLevel();
+        CurGameLevel = 1;
+        menuCanvas.gameObject.SetActive(false);
 
-        levelCanvas.gameObject.SetActive(false);
-
-        CurGameLevel++;
-
-        // Level Kontrolleri
-        if(CurGameLevel == 5)
-        {
-            levelBottleCount = 5;
-        }
-        else if(CurGameLevel == 10)
-        {
-            levelBottleCount = 7;
-        }
-        else if (CurGameLevel == 15)
-        {
-            levelBottleCount = 9;
-        }
-        else if (CurGameLevel == 13)
-        {
-            CreateTutorialLevel();
-        }
-
-        // Seviye numarası ekranda gösterilir.
+        // Önceki seviyenin elemanları temizlenir.
         levelText.text = "Level " + CurGameLevel;
+        levelBottleCount = 3;
+        //  levelColorCount = 2;
 
-        // Coroutine kullanarak yeni objeleri oluşturma işlemlerini sırayla gerçekleştirme
+        // Sıvılar, şişeler ve koyunlar üretilir.
         StartCoroutine(GenerateObjectsAfterRemoval());
     }
 
@@ -133,7 +135,7 @@ public class LevelCreatorScript : MonoBehaviour
 
     }
 
-    private IEnumerator GenerateObjectsAfterRemoval()
+    public IEnumerator GenerateObjectsAfterRemoval()
     {
         yield return new WaitForEndOfFrame(); // Bir sonraki frame'in sonunu bekleyelim
 
@@ -198,8 +200,6 @@ public class LevelCreatorScript : MonoBehaviour
             }
         }
     }
-
-
 
 
     // Koyunlarýn oluþturulmasý için kullanýlan metot.

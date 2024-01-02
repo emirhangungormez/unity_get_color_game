@@ -8,38 +8,61 @@ public class GameController : MonoBehaviour
 {
     public static int CurGameLevel;
     [SerializeField] private Canvas menuCanvas;
+    [SerializeField] private GameObject Level;
 
-    // Start is called before the first frame update
+    public AudioSource soundSource; // Ses kaynaðý
+    private bool isSoundPlaying = true;
+
     void Start()
     {
 
-        if (SaveSystem.LoadGame() == null)
+        CurGameLevel = LevelCreatorScript.CurGameLevel;
+        LevelCreatorScript.instance.CreateTutorialLevel();
+
+        soundSource = GetComponent<AudioSource>(); 
+        if (soundSource != null)
         {
-            CurGameLevel = LevelCreatorScript.CurGameLevel; // Ýlk defa oyun baþlatýldýðýnda baþlangýç seviyesi
-            LevelCreatorScript.instance.CreateTutorialLevel();
+            soundSource.Play(); 
         }
-        else
-        {
-            Data save = SaveSystem.LoadGame();
-            CurGameLevel = save.curGameLevel;
-            LevelCreatorScript.instance.CreateNewLevel();
-        }
+    }
+
+    public void AgainGame()
+    {
+        Level.gameObject.SetActive(true);
+        LevelCreatorScript.instance.RemoveOldLevel();
     }
 
     public void CreateMenu()
     {
         menuCanvas.gameObject.SetActive(true);
+        Level.gameObject.SetActive(false); 
     }
 
-    public void QuitButton()
+    public void QuitGame()
     {
         Application.Quit();
     }
-}
 
-[System.Serializable]
-public struct TouchData
-{
-    public string device;
-    public Vector3 mousePosition;
+    public void ToggleSound()
+    {
+        if (soundSource != null)
+        {
+            if (isSoundPlaying)
+            {
+                soundSource.Stop();
+                isSoundPlaying = false;
+                Debug.LogError("Ses kapatýldý!");
+            }
+            else
+            {
+                soundSource.Play();
+                isSoundPlaying = true;
+                Debug.LogError("Ses açýldý!");
+            }
+        }
+        else
+        {
+            Debug.LogError("Ses kaynaðý bulunamýyor!");
+        }
+    }
 }

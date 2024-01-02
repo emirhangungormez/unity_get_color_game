@@ -2,8 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.WSA;
-using static UnityEditor.Rendering.FilterWindow;
 
 public class BottleScript : MonoBehaviour
 {
@@ -41,6 +39,7 @@ public class BottleScript : MonoBehaviour
 
         _liquidMat = liquidSprite.GetComponent<SpriteRenderer>().material;
         startPos = transform.position;
+
         BottleCreateLiquids();
 
         // Sahnedeki SheepHolder objesini alıyoruz
@@ -322,7 +321,7 @@ public class BottleScript : MonoBehaviour
         // Animate Moving To Spill Position
         if (animFrame < 30)
         {
-            transform.position = Vector3.Lerp(startPos, targetPos, animFrame / 29f);
+            transform.position = Vector3.Lerp(startPos + new Vector2(0, 0.4f), targetPos, animFrame / 29f);
             animFrame++;
         }
         // Animate Rotation Until Spill Starts

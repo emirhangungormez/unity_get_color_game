@@ -11,39 +11,65 @@ public class TouchController : MonoBehaviour
         if (Input.touchCount <= 0) return;
         var touch = Input.touches[0];
         if (touch.phase != TouchPhase.Ended) return;
+
         Ray ray = Camera.main.ScreenPointToRay(touch.position);
         RaycastHit hit;
         bool isHit = Physics.Raycast(ray, out hit, 15);
         if (isHit)
         {
-            if (hit.transform.GetComponent<BottleScript>())
+            Transform objectHit = hit.transform;
+            if (!IsUnderSheepsBottle(objectHit))
             {
-                BottleScript newBottle = hit.transform.GetComponent<BottleScript>();
-                if (curBottle == null && !BottleScript.isSelectionInProgress)
+                if (objectHit.GetComponent<BottleScript>())
                 {
-                    curBottle = newBottle;
-                    curBottle.BottleClicked();
-                }
-                else
-                {
-                    if (curBottle == newBottle && !BottleScript.isSelectionInProgress)
+                    BottleScript newBottle = objectHit.GetComponent<BottleScript>();
+                    if (curBottle == null && !BottleScript.isSelectionInProgress)
                     {
+                        curBottle = newBottle;
                         curBottle.BottleClicked();
-                        curBottle = null;
                     }
-                    else 
+                    else
                     {
-                        if (!BottleScript.isSelectionInProgress)
+                        if (curBottle == newBottle && !BottleScript.isSelectionInProgress)
                         {
-                            List<int> liquidTransferList = CheckLiquidTransfer(curBottle.liquids, newBottle.liquids);
-                            Debug.Log(string.Join(", ", liquidTransferList));
-                            curBottle.LiquidTransfer(newBottle, liquidTransferList);
+                            curBottle.BottleClicked();
                             curBottle = null;
+                        }
+                        else
+                        {
+                            if (!BottleScript.isSelectionInProgress)
+                            {
+                                List<int> liquidTransferList = CheckLiquidTransfer(curBottle.liquids, newBottle.liquids);
+                                Debug.Log(string.Join(", ", liquidTransferList));
+                                curBottle.LiquidTransfer(newBottle, liquidTransferList);
+                                curBottle = null;
+                            }
                         }
                     }
                 }
             }
+            else
+            {
+                Debug.Log("Þiþe dokunulmaz!");
+            }
+            
         }
+    }
+
+    private bool IsUnderSheepsBottle(Transform objectTransform)
+    {
+        Transform parent = objectTransform.parent;
+
+        while (parent != null)
+        {
+            if (parent.CompareTag("SheepsBottle"))
+            {
+                return true;
+            }
+            parent = parent.parent;
+        }
+
+        return false;
     }
 
     private List<int> CheckLiquidTransfer(List<int> curLiquids, List<int> newLiquids)
