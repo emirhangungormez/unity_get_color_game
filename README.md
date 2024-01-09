@@ -1,6 +1,6 @@
 # Get Color
 
-This repository is for the Unity game titled "Game Title," developed by [Emirhan Güngörmez](emirhangungormez.com) and created for a games publisher company [Voodoo](https://www.voodoo.io/).
+This repository is for the Unity game titled Get Color, developed by [Emirhan Güngörmez](emirhangungormez.com) and created for a games publisher company [Voodoo](https://www.voodoo.io/).
 
 ## About the Game
 
